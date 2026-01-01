@@ -1,0 +1,32 @@
+{
+    "1": {
+        "S": "400",
+        "S__type__": "number",
+        "Z": "0",
+        "Z__type__": "number",
+        "NAME": "",
+        "NAME__type__": "string",
+        "DTK": "12",
+        "DTK__type__": "number"
+    },
+    "2": {
+        "S": "320",
+        "S__type__": "number",
+        "Z": "0",
+        "Z__type__": "number",
+        "NAME": "",
+        "NAME__type__": "string",
+        "DTK": "350",
+        "DTK__type__": "number"
+    },
+    "3": {
+        "S": "532",
+        "S__type__": "number",
+        "Z": "0",
+        "Z__type__": "number",
+        "NAME": "",
+        "NAME__type__": "string",
+        "DTK": "23",
+        "DTK__type__": "number"
+    }
+}
