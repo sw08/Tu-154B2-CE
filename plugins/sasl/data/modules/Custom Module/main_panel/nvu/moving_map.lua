@@ -161,7 +161,7 @@ local prev_scroll_pos = 0      -- Previous scroll position for detecting movemen
 
 
 local PA3_MAP_WIDTH = 1142                       -- pixels, corresponds to 160km
-local PA3_MAP_HEIGHT = 16000                     -- or as needed for your scrollable area
+local PA3_MAP_HEIGHT = 20000                     -- or as needed for your scrollable area
 local PA3_MAP_SCALE_KM = PA3_MAP_WIDTH / 160 / 2 -- pixels per km
 local PA3_SCALE_ALT = PA3_MAP_WIDTH / 40 / 2     -- "Airdrome"
 
@@ -239,25 +239,37 @@ local function activateCustomScroll(index)
         sasl.gl.unloadTexture(pa3_custom_scroll)
         pa3_custom_scroll = nil
     end
-    pa3_custom_scroll = sasl.gl.loadImage(scrollPath)
 
-    -- load custom scroll metadata
-    local metadataPath = sasl.getAircraftPath() .. "/pa3/" .. string.gsub(scrollName, "%.png$", ".json")
-    local metadata_file = io.open(metadataPath, "r")
-    if metadata_file then
-        local metadata = json.decode(metadata_file:read("*all"))
-        -- import marks
-        PA3.Configuration.Marks = metadata.marks or {}
-        sasl.logDebug("PA-3: Loaded custom scroll metadata for " .. scrollName)
-        sasl.logDebug("PA-3: Marks: " .. table.concat(PA3.Configuration.Marks, ", "))
+
+    local ok, err = stb_stitch.loadToRenderTargets(
+        scrollPath,
+        pa3_map_tiles,
+        PA3_MAP_WIDTH,
+        TILE_HEIGHT
+    )
+    if ok then
+        sasl.logInfo("PA-3: Loaded custom scroll from " .. scrollPath)
+        -- load custom scroll metadata
+        local metadataPath = sasl.getAircraftPath() .. "/pa3/" .. string.gsub(scrollName, "%.png$", ".json")
+        local metadata_file = io.open(metadataPath, "r")
+        if metadata_file then
+            local metadata = json.decode(metadata_file:read("*all"))
+            -- import marks
+            PA3.Configuration.Marks = metadata.marks or {}
+            sasl.logDebug("PA-3: Loaded custom scroll metadata for " .. scrollName)
+            sasl.logDebug("PA-3: Marks: " .. table.concat(PA3.Configuration.Marks, ", "))
+        else
+            PA3.Configuration.Marks = {}
+            sasl.logInfo("PA-3: No custom scroll metadata found for " .. scrollName)
+        end
+
+        PA3.isCustomScrollActive = true
+        PA3.activeCustomScrollName = scrollName
+        sasl.logInfo("PA-3: Activated custom scroll: " .. scrollName)
     else
-        PA3.Configuration.Marks = {}
-        sasl.logInfo("PA-3: No custom scroll metadata found for " .. scrollName)
+        sasl.logWarning("PA-3: Failed to load scroll: " .. scrollName .. " " .. tostring(err))
+        return
     end
-
-    PA3.isCustomScrollActive = true
-    PA3.activeCustomScrollName = scrollName
-    sasl.logInfo("PA-3: Activated custom scroll: " .. scrollName)
 end
 
 sasl.registerCommandHandler(cycle_scroll_left_cmd, 0, function(phase)
@@ -771,16 +783,8 @@ sasl.gl.linkShaderProgram(map_shader)
 
 function drawMap()
     sasl.gl.setRenderTarget(pa3_map_rt)
-    if pa3_custom_scroll then
-        -- Custom scroll: split the loaded image across tiles
-        for i = 1, NUM_TILES do
-            sasl.gl.setRenderTarget(pa3_map_tiles[i])
-            local src_y = (i - 1) * TILE_HEIGHT
-            sasl.gl.drawTexturePart(pa3_custom_scroll,
-                0, 0, PA3_MAP_WIDTH, TILE_HEIGHT,
-                0, src_y, PA3_MAP_WIDTH, TILE_HEIGHT, { 1, 1, 1, 1 })
-        end
-        sasl.gl.restoreRenderTarget()
+    if PA3.isCustomScrollActive then
+        return
     else
         -- Procedural: render each tile with offset
         for i = 1, NUM_TILES do
