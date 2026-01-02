@@ -1,6 +1,6 @@
 name: Performance Issue
 description: Report FPS drops, stutters, or freezes
-labels: ["BUG", "Priority: High"]
+labels: ["Type: BUG", "Priority: High"]
 body:
   - type: input
     id: title

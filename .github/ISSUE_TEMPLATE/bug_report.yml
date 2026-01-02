@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report something that isn't working correctly
-labels: ["BUG"]
+labels: ["Type: BUG"]
 body:
   - type: input
     id: title
