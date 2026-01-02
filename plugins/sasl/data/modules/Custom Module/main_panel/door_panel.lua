@@ -33,8 +33,11 @@ defineProperty("pax_door_3", globalPropertyf("tu154b2/custom/anim/pax_door_3")) 
 
 defineProperty("busters_cap", globalPropertyi("tu154b2/custom/switchers/console/busters_cap")) -- крышка выключателей бустеров
 
-
-
+local door1=0
+local door2=0
+local door3=0
+local door4=0
+local door5=0
 
 local passed = get(frame_time)
 
@@ -48,21 +51,34 @@ local function lamps()
 	local other_hatches_brt = math.max(0 * lamps_brt * day_night, test_btn) -- fake for now
 	set(other_hatches, other_hatches_brt)
 	if get(nosewheel_turn_sel)>0 then
-		local left_front_pax_door_brt = math.max(bool2int(get(pax_door_1) > 0) * lamps_brt * day_night, test_btn)
-		set(left_front_pax_door, left_front_pax_door_brt)
-		
-		local left_mid_pax_door_brt = math.max(bool2int(get(pax_door_2) > 0) * lamps_brt * day_night, test_btn) 
-		set(left_mid_pax_door, left_mid_pax_door_brt)
-		
-		local right_mid_pax_door_brt = math.max(bool2int(get(pax_door_3) > 0) * lamps_brt * day_night, test_btn)
-		set(right_mid_pax_door, right_mid_pax_door_brt)
-		
-		local cargo_front_door_brt = math.max(bool2int(get(cargo_1) > 0) * lamps_brt * day_night, test_btn)
-		set(cargo_front_door, cargo_front_door_brt)
-		
-		local cargo_back_door_brt = math.max(bool2int(get(cargo_2) > 0) * lamps_brt * day_night, test_btn)
-		set(cargo_back_door, cargo_back_door_brt)
+		door1=bool2int(get(pax_door_1) > 0)
+	    door2=bool2int(get(pax_door_2) > 0)
+	    door3=bool2int(get(pax_door_3) > 0)
+	    door4=bool2int(get(cargo_1) > 0)
+	    door5=bool2int(get(cargo_2) > 0)
+	else
+		door1=math.min(door1,1-bool2int(get(pax_door_1) == 0))
+	    door2=math.min(door2,1-bool2int(get(pax_door_2) == 0))
+	    door3=math.min(door3,1-bool2int(get(pax_door_3) == 0))
+	    door4=math.min(door4,1-bool2int(get(cargo_1) == 0))
+	    door5=math.min(door5,1-bool2int(get(cargo_2) == 0))
 	end
+		
+	local left_front_pax_door_brt = math.max(door1 * lamps_brt * day_night, test_btn)
+	set(left_front_pax_door, left_front_pax_door_brt)
+	
+	local left_mid_pax_door_brt = math.max(door2 * lamps_brt * day_night, test_btn) 
+	set(left_mid_pax_door, left_mid_pax_door_brt)
+	
+	local right_mid_pax_door_brt = math.max(door3 * lamps_brt * day_night, test_btn)
+	set(right_mid_pax_door, right_mid_pax_door_brt)
+	
+	local cargo_front_door_brt = math.max(door4 * lamps_brt * day_night, test_btn)
+	set(cargo_front_door, cargo_front_door_brt)
+	
+	local cargo_back_door_brt = math.max(door5 * lamps_brt * day_night, test_btn)
+	
+	set(cargo_back_door, cargo_back_door_brt)
 	local turn63_lamp_brt = math.max(get(nosewheel_turn_sel) * get(nosewheel_turn_enable) * lamps_brt * day_night, test_btn)
 	set(turn63_lamp, turn63_lamp_brt)
 	

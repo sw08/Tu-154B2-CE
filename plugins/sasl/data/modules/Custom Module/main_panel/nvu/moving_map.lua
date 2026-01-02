@@ -68,7 +68,7 @@ local function truncate2(num)
 end
 defineProperty("diss_groundspeed", globalPropertyf("tu154b2/custom/nvu/diss_groundspeed")) -- путевая скорость по ДИСС - km/h
 defineProperty("diss_slip_angle", globalPropertyf("tu154b2/custom/nvu/diss_slip_angle"))   -- угол сноса по ДИСС
-delta_course_property = globalPropertyf("tu154b2/custom/nvu/delta_course")
+--delta_course_property = globalPropertyf("tu154b2/custom/nvu/delta_course")
 effective_speed_property = createGlobalPropertyf("tu154b2/custom/nvu/effective_speed", 0.0)
 
 cockpit_80s = globalPropertyi("sim/custom/b2/kontur_70th")
@@ -156,7 +156,7 @@ local prev_scroll_pos = 0      -- Previous scroll position for detecting movemen
 
 -- Render target for procedural map drawing
 local PA3_MAP_WIDTH = 1142                       -- pixels, corresponds to 160km
-local PA3_MAP_HEIGHT = 20000                     -- or as needed for your scrollable area
+local PA3_MAP_HEIGHT = 16000                     -- or as needed for your scrollable area
 local PA3_MAP_SCALE_KM = PA3_MAP_WIDTH / 160 / 2 -- pixels per km
 local PA3_SCALE_ALT = PA3_MAP_WIDTH / 40 / 2     -- "Airdrome"
 
@@ -167,7 +167,7 @@ local pa3_custom_scroll = nil
 
 local pa3_shader = sasl.gl.createShaderProgram()
 sasl.gl.loadShader(pa3_shader, "pa3_handdrawn_vert.glsl", SHADER_TYPE_VERTEX)
-sasl.gl.loadShader(pa3_shader, "pa3_handdrawn_frag.glsl", SHADER_TYPE_FRAGMENT)
+--sasl.gl.loadShader(pa3_shader, "pa3_handdrawn_frag.glsl", SHADER_TYPE_FRAGMENT)
 sasl.gl.linkShaderProgram(pa3_shader)
 
 
@@ -721,7 +721,7 @@ end
 
 local map_shader = sasl.gl.createShaderProgram()
 sasl.gl.loadShader(map_shader, "pa3_handdrawn_vert.glsl", SHADER_TYPE_VERTEX)
-sasl.gl.loadShader(map_shader, "pa3_handdrawn_frag.glsl", SHADER_TYPE_FRAGMENT)
+--sasl.gl.loadShader(map_shader, "pa3_handdrawn_frag.glsl", SHADER_TYPE_FRAGMENT)
 sasl.gl.linkShaderProgram(map_shader)
 
 function drawMap()

@@ -1,6 +1,6 @@
 [TU154B2 INFO]: Initializing...
-[TU154B2 INFO]: [DISPLAY] Monitor 0: 0, 0, 1920, 1080
-[TU154B2 INFO]: Path to module: C:\Program Files (x86)/Steam/steamapps/common/X-Plane 12/Aircraft/Tu154_b2/plugins/sasl/data/modules/main.lua
+[TU154B2 INFO]: [DISPLAY] Monitor 0: 0, 0, 2560, 1440
+[TU154B2 INFO]: Path to module: D:\X-Plane 12/Aircraft/Tu154_b2/plugins/sasl/data/modules/main.lua
 [TU154B2 INFO]: Loading module...
 [TU154B2 INFO]: [LUA]: loading	module
 [TU154B2 INFO]: [LUA]: "module"	This is the Tu154B-2 for XP12
@@ -89,13 +89,6 @@
 [TU154B2 INFO]: [LUA]: loading	tks
 [TU154B2 INFO]: [LUA]: loading	km5
 [TU154B2 INFO]: [LUA]: loading	gyro
-[TU154B2 WARN]: [STACK]:| findDataRef : DataRefsHandler::luaFindDataRef: <bp/connected> not found
-[TU154B2 WARN]: [STACK]:| ...craft/Tu154_b2/plugins/sasl/data/init/initProperties.lua:390 in function <globalPropertyi>
-[TU154B2 WARN]: [STACK]:| .../sasl/data/modules/Custom Module/main_panel/tks/gyro.lua:79 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <gyro>
-[TU154B2 WARN]: [STACK]:| ...s/sasl/data/modules/Custom Module/main_panel/tks/tks.lua:26 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <tks>
-[TU154B2 WARN]: [STACK]:| ...
 [TU154B2 INFO]: [LUA]: loading	ush3
 [TU154B2 INFO]: [LUA]: loading	bgmk
 [TU154B2 INFO]: [LUA]: loading	tks_panel
@@ -147,13 +140,6 @@
 [TU154B2 DEBUG]: [LUA]: "sim/graphics/view/pilots_head_psi": Casting float to int
 [TU154B2 INFO]: [LUA]: loading	nvu_logic
 [TU154B2 INFO]: [LUA]: loading	moving_map
-[TU154B2 WARN]: [STACK]:| findDataRef : DataRefsHandler::luaFindDataRef: <tu154b2/custom/nvu/delta_course> not found
-[TU154B2 WARN]: [STACK]:| ...craft/Tu154_b2/plugins/sasl/data/init/initProperties.lua:297 in function <globalPropertyf>
-[TU154B2 WARN]: [STACK]:| ...data/modules/Custom Module/main_panel/nvu/moving_map.lua:71 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <moving_map>
-[TU154B2 WARN]: [STACK]:| ...s/sasl/data/modules/Custom Module/main_panel/nvu/nvu.lua:118 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <nvu>
-[TU154B2 WARN]: [STACK]:| ...
 [TU154B2 INFO]: [LUA]: loading	absu
 [TU154B2 INFO]: [LUA]: loading	absu_commands
 [TU154B2 INFO]: [LUA]: loading	absu_panel
@@ -245,13 +231,6 @@
 [TU154B2 DEBUG]: [LUA]: "tu154b2/custom/gauges/eng/oil_qty_3_p": Casting float to int
 [TU154B2 DEBUG]: [LUA]: "tu154b2/custom/gauges/eng/oil_qty_3_h": Casting float to int
 [TU154B2 INFO]: [LUA]: loading	rud_logic
-[TU154B2 WARN]: [STACK]:| findDataRef : DataRefsHandler::luaFindDataRef: <bp/connected> not found
-[TU154B2 WARN]: [STACK]:| ...craft/Tu154_b2/plugins/sasl/data/init/initProperties.lua:390 in function <globalPropertyi>
-[TU154B2 WARN]: [STACK]:| .../data/modules/Custom Module/engines_system/rud_logic.lua:131 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <rud_logic>
-[TU154B2 WARN]: [STACK]:| .../modules/Custom Module/engines_system/engines_system.lua:7 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <engines_system>
-[TU154B2 WARN]: [STACK]:| ...
 [TU154B2 INFO]: [LUA]: loading	vibration_logic
 [TU154B2 INFO]: [LUA]: loading	eng_fails
 [TU154B2 INFO]: [LUA]: loading	rt12
@@ -297,20 +276,6 @@
 [TU154B2 INFO]: [LUA]: loading	flaps
 [TU154B2 DEBUG]: [LUA]: "sim/graphics/view/pilots_head_psi": Casting float to int
 [TU154B2 INFO]: [LUA]: loading	nosewheel
-[TU154B2 WARN]: [STACK]:| findDataRef : DataRefsHandler::luaFindDataRef: <bp/connected> not found
-[TU154B2 WARN]: [STACK]:| ...craft/Tu154_b2/plugins/sasl/data/init/initProperties.lua:390 in function <globalPropertyi>
-[TU154B2 WARN]: [STACK]:| ...s/sasl/data/modules/Custom Module/controls/nosewheel.lua:23 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <nosewheel>
-[TU154B2 WARN]: [STACK]:| ...ns/sasl/data/modules/Custom Module/controls/controls.lua:8 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <controls>
-[TU154B2 WARN]: [STACK]:| ...
-[TU154B2 WARN]: [STACK]:| findDataRef : DataRefsHandler::luaFindDataRef: <bp/started> not found
-[TU154B2 WARN]: [STACK]:| ...craft/Tu154_b2/plugins/sasl/data/init/initProperties.lua:390 in function <globalPropertyi>
-[TU154B2 WARN]: [STACK]:| ...s/sasl/data/modules/Custom Module/controls/nosewheel.lua:24 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <nosewheel>
-[TU154B2 WARN]: [STACK]:| ...ns/sasl/data/modules/Custom Module/controls/controls.lua:8 in function <f>
-[TU154B2 WARN]: [STACK]:| ...12/Aircraft/Tu154_b2/plugins/sasl/data/init/initMain.lua:260 in function <controls>
-[TU154B2 WARN]: [STACK]:| ...
 [TU154B2 INFO]: [LUA]: loading	landing_gears
 [TU154B2 DEBUG]: [LUA]: "sim/graphics/view/pilots_head_psi": Casting float to int
 [TU154B2 INFO]: [LUA]: loading	control_fails
@@ -383,10 +348,14 @@
 [TU154B2 INFO]: [LUA]: loading	failures_2d
 [TU154B2 INFO]: [LUA]: loading	fail_runtime
 [TU154B2 INFO]: [LUA]: loading	failures_draw
-[TU154B2 INFO]: Scripts loading time: 4.3645
+[TU154B2 INFO]: Scripts loading time: 1.1405
 [TU154B2 INFO]: Module loaded
 [TU154B2 INFO]: Initializing modules...
 [TU154B2 INFO]: Modules initialization done
 [TU154B2 DEBUG]: [LUA]: updating marks
 [TU154B2 INFO]: [LUA]: "crew_voices"	PREPARE
 [TU154B2 INFO]: [LUA]: "save_state"	reading last state: OK
+[TU154B2 INFO]: Disabling...
+[TU154B2 INFO]: [LUA]: "flight_controls"	flight controls released
+[TU154B2 INFO]: [LUA]: "rud_logic"	throttles released
+[TU154B2 INFO]: SASL plugin stopped...
