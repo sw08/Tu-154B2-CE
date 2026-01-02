@@ -88,7 +88,7 @@ local scroll_velocity = 0 -- mm/sec
 local SCROLL_ACCEL = 600    -- mm/sec^2, acceleration when button held
 local SCROLL_FRICTION = 800 -- mm/sec^2, deceleration when button released
 local SCROLL_VEL_MAX = 1000 -- mm/sec, maximum scroll speed
-
+json = require("json")
 MAP_END = 0
 
 -- PA-3 scale modes
@@ -214,6 +214,21 @@ local function activateCustomScroll(index)
         pa3_custom_scroll = nil
     end
     pa3_custom_scroll = sasl.gl.loadImage(scrollPath)
+
+    -- load custom scroll metadata
+    local metadataPath = sasl.getAircraftPath() .. "/pa3/" .. string.gsub(scrollName, "%.png$", ".json")
+    local metadata_file = io.open(metadataPath, "r")
+    if metadata_file then
+        local metadata = json.decode(metadata_file:read("*all"))
+        -- import marks
+        PA3.Configuration.Marks = metadata.marks or {}
+        sasl.logDebug("PA-3: Loaded custom scroll metadata for " .. scrollName)
+        sasl.logDebug("PA-3: Marks: " .. table.concat(PA3.Configuration.Marks, ", "))
+    else
+        PA3.Configuration.Marks = {}
+        sasl.logInfo("PA-3: No custom scroll metadata found for " .. scrollName)
+    end
+
     PA3.isCustomScrollActive = true
     PA3.activeCustomScrollName = scrollName
     sasl.logInfo("PA-3: Activated custom scroll: " .. scrollName)
