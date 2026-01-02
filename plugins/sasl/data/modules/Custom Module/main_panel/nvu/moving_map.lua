@@ -55,12 +55,12 @@ defineProperty("nvu_changing_ort", globalPropertyi("tu154b2/custom/nvu/nvu_chang
 defineProperty("nvu_cc", globalPropertyf("tu154b2/custom/nvu/nvu_cc"))                     -- NVU current consumption
 
 -- Current values from NVU
-defineProperty("current_Z1", globalPropertyf("tu154b2/custom/nvu/current_Z1")) -- Z value for first route leg
-defineProperty("current_S1", globalPropertyf("tu154b2/custom/nvu/current_S1")) -- S value for first route leg
-defineProperty("current_Z2", globalPropertyf("tu154b2/custom/nvu/current_Z2")) -- Z value for second route leg
-defineProperty("current_S2", globalPropertyf("tu154b2/custom/nvu/current_S2")) -- S value for second route leg
+defineProperty("current_Z1", globalPropertyf("tu154b2/custom/nvu/current_Z1"))        -- Z value for first route leg
+defineProperty("current_S1", globalPropertyf("tu154b2/custom/nvu/current_S1"))        -- S value for first route leg
+defineProperty("current_Z2", globalPropertyf("tu154b2/custom/nvu/current_Z2"))        -- Z value for second route leg
+defineProperty("current_S2", globalPropertyf("tu154b2/custom/nvu/current_S2"))        -- S value for second route leg
 
-
+defineProperty("sd75_on", globalPropertyi("tu154b2/custom/switchers/ovhd/sd75_1_on")) -- TODO: implement proper SD-67
 defineProperty("ismaster", globalPropertyf("scp/api/ismaster"))
 -- Utility: truncate a number to at most two decimal places (no rounding)
 local function truncate2(num)
@@ -355,6 +355,7 @@ function update()
 
     if get(cockpit_80s) == 0 then
         set(nav_sel, 0) -- temporary crutch so that nav sel switch is always on NVU while 80s cockpit is selected
+        set(sd75_on, 1) -- TODO: Implement SD75
     end
 
     -- Only process if we have power
