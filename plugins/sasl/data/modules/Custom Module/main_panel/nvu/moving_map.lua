@@ -89,6 +89,7 @@ local SCROLL_ACCEL = 600    -- mm/sec^2, acceleration when button held
 local SCROLL_FRICTION = 800 -- mm/sec^2, deceleration when button released
 local SCROLL_VEL_MAX = 1000 -- mm/sec, maximum scroll speed
 json = require("json")
+local stb_stitch = require("stb_stitch")
 MAP_END = 0
 
 -- PA-3 scale modes
@@ -155,10 +156,18 @@ local prev_scroll_pos = 0      -- Previous scroll position for detecting movemen
 
 
 -- Render target for procedural map drawing
+
+
+
+
 local PA3_MAP_WIDTH = 1142                       -- pixels, corresponds to 160km
 local PA3_MAP_HEIGHT = 16000                     -- or as needed for your scrollable area
 local PA3_MAP_SCALE_KM = PA3_MAP_WIDTH / 160 / 2 -- pixels per km
 local PA3_SCALE_ALT = PA3_MAP_WIDTH / 40 / 2     -- "Airdrome"
+
+local TILE_HEIGHT = 4096
+local NUM_TILES = math.ceil(PA3_MAP_HEIGHT / TILE_HEIGHT)
+local pa3_map_tiles = {}
 
 -- offset of the mark from beginning of the map
 local MARK_OFFSET = 51
@@ -178,8 +187,22 @@ local save_scroll_cmd = sasl.createCommand("tu154b2/custom/nvu/pa3/save_scroll",
 pa3_save_scroll = sasl.appendMenuItemWithCommand(pa3_menu, "Save current scroll to image", save_scroll_cmd)
 sasl.registerCommandHandler(save_scroll_cmd, 0, function(phase)
     if phase == SASL_COMMAND_END then
-        sasl.logDebug("Saving scroll to image")
-        sasl.gl.imageFromTexture(sasl.getAircraftPath() .. "/pa3/nvu_map.png", pa3_map_rt)
+        local path = sasl.getAircraftPath() .. "/pa3/nvu_map.png"
+
+        -- pa3_map_tiles is array of render target IDs
+        local ok, err = stb_stitch.stitchRenderTargets(
+            path,
+            pa3_map_tiles, -- array of render target IDs
+            PA3_MAP_WIDTH, -- 1142
+            TILE_HEIGHT,   -- e.g., 4096
+            4              -- RGBA
+        )
+
+        if ok then
+            sasl.logInfo("PA-3: Saved scroll to " .. path)
+        else
+            sasl.logWarning("PA-3: Failed to save scroll: " .. tostring(err))
+        end
     end
 end)
 
@@ -361,7 +384,7 @@ function update()
         set(nav_sel, 0) -- temporary crutch so that nav sel switch is always on NVU while 80s cockpit is selected
         set(sd75_on, 1) -- TODO: Implement SD75
     end
-
+    has_power = true
     -- Only process if we have power
     if has_power then
         -- Add base current draw when powered
@@ -749,67 +772,74 @@ sasl.gl.linkShaderProgram(map_shader)
 function drawMap()
     sasl.gl.setRenderTarget(pa3_map_rt)
     if pa3_custom_scroll then
-        sasl.gl.setRenderTarget(pa3_map_rt)
-        sasl.gl.drawTexture(pa3_custom_scroll, 0, 0, PA3_MAP_WIDTH, PA3_MAP_HEIGHT, { 1, 1, 1, 1 })
+        -- Custom scroll: split the loaded image across tiles
+        for i = 1, NUM_TILES do
+            sasl.gl.setRenderTarget(pa3_map_tiles[i])
+            local src_y = (i - 1) * TILE_HEIGHT
+            sasl.gl.drawTexturePart(pa3_custom_scroll,
+                0, 0, PA3_MAP_WIDTH, TILE_HEIGHT,
+                0, src_y, PA3_MAP_WIDTH, TILE_HEIGHT, { 1, 1, 1, 1 })
+        end
+        sasl.gl.restoreRenderTarget()
     else
-        --sasl.gl.useShaderProgram(map_shader)
-        --sasl.gl.setShaderUniform(map_shader, "u_map", TYPE_SAMPLER, pa3_map_rt, 0)
-        --sasl.gl.setShaderUniform(map_shader, "u_time", TYPE_FLOAT, 0)
-        ----sasl.gl.setShaderUniform(map_shader, "u_resolution", { PA3_MAP_WIDTH, PA3_MAP_HEIGHT })
-        --sasl.gl.setShaderUniform(map_shader, "u_edgeStrength", TYPE_FLOAT, 1.2)
-        --sasl.gl.setShaderUniform(map_shader, "u_edgeThreshold", TYPE_FLOAT, 0.18)
-        --sasl.gl.setShaderUniform(map_shader, "u_edgeSoftness", TYPE_FLOAT, 0.08)
-        --sasl.gl.setShaderUniform(map_shader, "u_hatchStrength", TYPE_FLOAT, 0.8)
-        --sasl.gl.setShaderUniform(map_shader, "u_hatchScale", TYPE_FLOAT, 1.0)
-        --sasl.gl.setShaderUniform(map_shader, "u_hatchWidth", TYPE_FLOAT, 0.10)
-        --sasl.gl.setShaderUniform(map_shader, "u_hatchNoise", TYPE_FLOAT, 0.35)
-        --sasl.gl.setShaderUniform(map_shader, "u_posterizeLevels", TYPE_FLOAT, 8.0)
-        --sasl.gl.setShaderUniform(map_shader, "u_wobbleAmp", TYPE_FLOAT, 0.003)
-        --sasl.gl.setShaderUniform(map_shader, "u_wobbleFreq", TYPE_FLOAT, 2.5)
-        --sasl.gl.setShaderUniform(map_shader, "u_wobbleSpeed", TYPE_FLOAT, 0.5)
-        --sasl.gl.setShaderUniform(map_shader, "u_paperStrength", TYPE_FLOAT, 0.5)
-        --sasl.gl.setShaderUniform(map_shader, "u_paperTiling", TYPE_FLOAT, 2.0)
-        --sasl.gl.setShaderUniform(map_shader, "u_inkColor", TYPE_FLOAT_ARRAY, { 0.07, 0.07, 0.07 })
-        --sasl.gl.setShaderUniform(map_shader, "u_grainStrength", TYPE_FLOAT, 0.08)
-        drawMapBackground()
-        if nvu_navplan.Legs then
-            local n = #nvu_navplan.Legs
-            if n > 0 then
-                local y_offset = scale(400)
-                drawMapTitle(y_offset)
-                for i = 1, n do
-                    local leg = nvu_navplan.Legs[i]
-                    if leg then
-                        local x = PA3_MAP_WIDTH / 2 + scale(leg.Z)
-                        local y_start = y_offset
-                        local y_end = y_start + scale(leg.S)
-                        drawLegSeparators(y_start, y_end)
-                        if i ~= #nvu_navplan.Legs or i == #nvu_navplan.Legs - 1 then
-                            sasl.gl.setClipArea(0, ((y_start - (gap / 1.5)) + ((gap / 2) / 1.5)), PA3_MAP_WIDTH,
-                                (scale(leg.S)) + (gap / 1.5))
-                        end
+        -- Procedural: render each tile with offset
+        for i = 1, NUM_TILES do
+            sasl.gl.setRenderTarget(pa3_map_tiles[i])
+            local tile_y_offset = (i - 1) * TILE_HEIGHT
 
-                        drawLegSegment(x, y_start, y_end)
-                        drawLegLabels(x, y_start, y_end, i, leg)
-                        drawLegMarkers(y_start, y_end, leg)
-                        local next_DTK = 0
-                        if i < #nvu_navplan.Legs - 1 then
-                            next_DTK = (nvu_navplan.Legs[i + 1].DTK or 0)
-                        end
-                        drawLegCourseArrows(x, y_start, y_end, i, leg, next_DTK)
+            -- Set up translation so drawing at "world" coordinates
+            -- maps correctly to this tile
+            sasl.gl.saveGraphicsContext()
+            sasl.gl.setTranslateTransform(0, -tile_y_offset)
 
-                        y_offset = y_end + gap
-                        if i == #nvu_navplan.Legs then
-                            drawMapEnding(y_end)
+            -- Draw full map content (clipping will discard out-of-bounds)
+            --
+            drawMapBackground()
+            if nvu_navplan.Legs then
+                local n = #nvu_navplan.Legs
+                if n > 0 then
+                    local y_offset = scale(400)
+                    drawMapTitle(y_offset)
+                    for i = 1, n do
+                        local leg = nvu_navplan.Legs[i]
+                        if leg then
+                            local x = PA3_MAP_WIDTH / 2 + scale(leg.Z)
+                            local y_start = y_offset
+                            local y_end = y_start + scale(leg.S)
+                            drawLegSeparators(y_start, y_end)
+                            if i ~= #nvu_navplan.Legs or i == #nvu_navplan.Legs - 1 then
+                                sasl.gl.setClipArea(0, ((y_start - (gap / 1.5)) + ((gap / 2) / 1.5)), PA3_MAP_WIDTH,
+                                    (scale(leg.S)) + (gap / 1.5))
+                            end
+
+                            drawLegSegment(x, y_start, y_end)
+                            drawLegLabels(x, y_start, y_end, i, leg)
+                            drawLegMarkers(y_start, y_end, leg)
+                            local next_DTK = 0
+                            if i < #nvu_navplan.Legs - 1 then
+                                next_DTK = (nvu_navplan.Legs[i + 1].DTK or 0)
+                            end
+                            drawLegCourseArrows(x, y_start, y_end, i, leg, next_DTK)
+
+                            y_offset = y_end + gap
+                            if i == #nvu_navplan.Legs then
+                                drawMapEnding(y_end)
+                            end
+                            sasl.gl.resetClipArea()
+                            if y_offset > PA3_MAP_HEIGHT then
+                                PA3_MAP_HEIGHT = PA3_MAP_HEIGHT + 4096
+                                sasl.logDebug("y_offset > PA3_MAP_HEIGHT, y_offset = " ..
+                                    y_offset .. ", PA3_MAP_HEIGHT = " .. PA3_MAP_HEIGHT)
+                            end
                         end
-                        sasl.gl.resetClipArea()
                     end
                 end
             end
+            sasl.gl.restoreGraphicsContext()
         end
+        sasl.gl.restoreRenderTarget()
     end
     --sasl.gl.stopShaderProgram(map_shader)
-    sasl.gl.restoreRenderTarget()
 end
 
 function updateMarks()
@@ -852,46 +882,36 @@ end
 function draw()
     if get(cockpit_80s) == 0 then -- we draw only if 80s variant is chosen, because the moving map overlaps the Kontur
         if isNonLitStage() then
-            -- Get the current state of the PA-3
             local scroll_pos = get(PA3.Scroll)
-            local current_leg = get(PA3.CurrentLeg)
+            local start_tile = math.floor((scroll_pos - size[2] / 2) / TILE_HEIGHT) + 1
+            local end_tile = math.ceil((scroll_pos + size[2] / 2) / TILE_HEIGHT)
 
-            --drawMap()
-
-            -- Map dimensions and parameters
-            local map_width = size[1]        -- Width of the visible map area
-            local map_height = size[2]       -- Height of the visible map area
-            local map_texture_width = 1142   -- Full texture width (assuming standard texture size)
-            local map_texture_height = 16384 -- Full texture height (assuming long scrollable map)
-
-            -- Calculate the section of the map to display based on current leg
-            local section_height = map_texture_height -- Assuming 6 legs maximum
-            local section_y_offset = 0
-
-            -- Calculate scroll position within the current section
-            -- Map the scroll position (-12000 to 12000 mm) to texture coordinates
-            local scroll_range = SCROLL_MAX * 2                           -- Total range is 24000 mm
-            local scroll_ratio = (scroll_pos + SCROLL_MAX) / scroll_range -- Normalize to 0-1
-            local texture_scroll_offset = scroll_pos
-
-            -- Calculate the texture coordinates for drawTexturePart
-            local tx = 0                                                         -- Start from left edge of texture
-            local ty = section_y_offset + texture_scroll_offset - map_height / 2 -- Y position based on leg and scroll
-            local twidth = map_texture_width                                     -- Use full texture width
-            local theight =
-                map_height                                                       -- Display height matches component height
-            --sasl.logDebug("tx: " .. tx .. " ty: " .. ty .. " twidth: " .. twidth .. " theight: " .. theight)
-            -- Draw the map
-            sasl.gl.drawTexturePart(pa3_map_rt, 0, 0, map_width, map_height, tx, ty, twidth, theight,
-                { 1.0, 1.0, 1.0, 1.0 })
+            for i = start_tile, end_tile do
+                if i >= 1 and i <= NUM_TILES then
+                    local tile_y = (i - 1) * TILE_HEIGHT
+                    local local_y = tile_y - scroll_pos + size[2] / 2
+                    sasl.gl.drawTexturePart(pa3_map_tiles[i],
+                        0, local_y, size[1], TILE_HEIGHT,
+                        0, 0, PA3_MAP_WIDTH, TILE_HEIGHT, { 1, 1, 1, 1 })
+                end
+            end
         end
     end
 end
 
 function onModuleInit()
     --updateMarks()
+    for i = 1, NUM_TILES do
+        pa3_map_tiles[i] = sasl.gl.createRenderTarget(PA3_MAP_WIDTH, TILE_HEIGHT)
+    end
+    sasl.logDebug("Tiles created")
+    sasl.logDebug("Tiles num: " .. NUM_TILES)
     PA3.ScrollPos = 600
+    stb_stitch:init()
 end
 
 function onModuleDone()
+    for i = 1, NUM_TILES do
+        sasl.gl.destroyRenderTarget(pa3_map_tiles[i])
+    end
 end
