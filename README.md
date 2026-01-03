@@ -1,5 +1,7 @@
 # Tu-154B2 CE (Community Edition)
 
+[![Nightly Build](https://github.com/Unicode4all/Tu-154B2-CE/actions/workflows/nightly-build.yml/badge.svg)](https://github.com/Unicode4all/Tu-154B2-CE/actions/workflows/nightly-build.yml)
+
 ## Overview
 This is a continuation of the Tu-154B2 project by Masterskaya which itself is based on the original Tu-154M by Felis.
 The intention is to fully overhaul the aircraft visuals and systems to bring it up to date with X-Plane 12.
