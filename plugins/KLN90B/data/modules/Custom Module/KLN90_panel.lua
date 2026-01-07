@@ -8454,10 +8454,10 @@ function readFpl(phase)
 		local num2 = 0
 
 		if file then
+			local rewritten = true
 			while true do
 				local line = file:read("*line")
 				--print(line)
-				local rewritten = true
 				if line == nil then break end
 				if string.sub(line, 0, 6) == "NUMENR" then
 					rewritten = false
