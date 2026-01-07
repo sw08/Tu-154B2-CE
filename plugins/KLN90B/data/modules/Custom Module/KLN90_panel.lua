@@ -8187,15 +8187,9 @@ function enterident(ident, types, name, character, prevnext, lat, lon) --enterid
     table2[1] = {}
     if name == 0 then
       table2[1]["ident"] = makelength(ident, 5, 0)
-      table2[1]['name1'] = "ZZZZZ"
     else
       table2[1]["name1"] = makelength(ident, 11, 0)
-      table2[1]['ident'] = "ZZZZZ"
     end
-    table2[1]['lat'] = lat
-    table2[1]['lon'] = lon
-    table2[1]['types'] = types
-    length2 = 1
   end
   table2["length"] = length2
   table2["num"] = table2[1]["num"]
