@@ -8187,9 +8187,15 @@ function enterident(ident, types, name, character, prevnext, lat, lon) --enterid
     table2[1] = {}
     if name == 0 then
       table2[1]["ident"] = makelength(ident, 5, 0)
+      table2[1]['name1'] = "ZZZZZ"
     else
       table2[1]["name1"] = makelength(ident, 11, 0)
+      table2[1]['ident'] = "ZZZZZ"
     end
+    table2[1]['lat'] = lat
+    table2[1]['lon'] = lon
+    table2[1]['types'] = types
+    length2 = 1
   end
   table2["length"] = length2
   table2["num"] = table2[1]["num"]
@@ -8437,97 +8443,111 @@ function createWPT(types, ident, PPOS)
 end
 
 --here we read the FPlans
-local num1 = 0
-while num1 <= 25 do
-  FPlan[num1] = {}
-  FPlan[num1]["length"] = 0
-  local filename = "Output/FMS plans/KLN 90B/" .. num1 .. ".fms"
-  local file = io.open(filename, "r")
-  local num2 = 0
+function readFpl(phase)
+  if phase ~= 2 then return end
+	local num1 = 0
+	while num1 <= 25 do
+		FPlan[num1] = {}
+		FPlan[num1]["length"] = 0
+		local filename = "Output/FMS plans/KLN 90B/" .. num1 .. ".fms"
+		local file = io.open(filename, "r")
+		local num2 = 0
 
-if file then
-    while true do
-      local line = file:read("*line")
-      --print(line)
-      if line == nil then break end
-      if string.find(line, "%d+%s+[%w%p]+%s+%d+") then
-        local a = string.find(line, "%d")
-        local b = string.find(line, " ", a+1)
-        local types = tonumber(string.sub(line, a, b-1))
-        if types ~= 0 then
-          num2 = num2 + 1
-          if num2 <= 30 then
-            FPlan[num1]["length"] = num2
-            a = string.find(line, " ", b+1)
-            local ident = makelength(string.sub(line, b+1, a-1), 5, 0)
-            b = string.find(line, " ", a+1)
-            --  print(a, b)
-            local alt = tonumber(string.sub(line, a+1, b-1))
-            --print(a, b, alt)
+		if file then
+			while true do
+				local line = file:read("*line")
+				--print(line)
+				local rewritten = true
+				if line == nil then break end
+				if string.sub(line, 0, 6) == "NUMENR" then
+					rewritten = false
+				end
+				if (rewritten and string.find(line, "%d+%s+[%w%p]+%s+%d+")) or (not rewritten and string.find(line, "%d+%s+[%w%p]+%s+[%w%p]+%s+%d+")) then
+					local a = string.find(line, "%d")
+					local b = string.find(line, " ", a+1)
+					local types = tonumber(string.sub(line, a, b-1))
+					if types ~= 0 then
+						num2 = num2 + 1
+						if num2 <= 30 then
+							FPlan[num1]["length"] = num2
+							a = string.find(line, " ", b+1)
+							local ident = makelength(string.sub(line, b+1, a-1), 5, 0)
+							if (not rewritten) then
+								a = string.find(line, " ", a+1)
+							end
+							b = string.find(line, " ", a+1)
+							--  print(a, b)
+							local alt = tonumber(string.sub(line, a+1, b-1))
+							--print(a, b, alt)
 
-            a = string.find(line, " ", b+1)
-            local lat = tonumber(string.sub(line, b+1, a-1))
-            local lon = tonumber(string.sub(line, a+1))
+							a = string.find(line, " ", b+1)
+							local lat = tonumber(string.sub(line, b+1, a-1))
+							local lon = tonumber(string.sub(line, a+1))
 
-            local WPT = {}
+							local WPT = {}
 
-            if types == 1 then
-              types = 0
-            elseif types == 3 then
-              types = 1
-            elseif types == 11 then
-              types = 3
-            elseif types == 28 then
-              types = 4
-            end
-            --print(num1, num2, types, ident, alt, lat, lon)
-            WPT = enterident(ident, types, 0, 5, 0, lat, lon)
-            --print(ident, types, WPT["length"])
-            if WPT["length"] == 0 then
-              --don't remove it, better create a user WPT, you know the type and everything!
-              if string.len(ident) > 5 or string.find(ident, "[+-.]") then
-                --This seems to be working!
-                local found = 1
-                local num3 = 1
-                while found ~= 0 do
-                  ident = string.format("WPT%02d", num3)
-                  WPT2 = enterident(ident, types, 0, 5, 0)
-                  found = WPT2["length"]
-                  --  WPT = enterident(ident, 0, 0, 4, 0)
-                  num3 = num3 + 1
-                end
-              end
-              --print(num1, ident)
-              local x = 0
-              createWPT(types, ident, 0)
-              WPT = enterident(ident, types, 0, 5, 0)
-              WPT[1]["lat"]= lat
-              WPT[1]["lon"]= lon
-              if types == 1 then
-                WPT[1]["magvar"] = round(-getmagvar(lat, lon))
-              end
-            end
-            FPlan[num1][num2] = WPT[1]
-          end
-        end
-      end
-    end
-    file:close()
-  end
-  FPlan[num1][num2+1] = {}
-  FPlan[num1][num2+1]["ident"] = "     "
-  FPlan[num1]["SIDident"] = ""
-  FPlan[num1]["SIDstart"] = 99
-  FPlan[num1]["SIDend"] = 99
-  FPlan[num1]["STARident"] = ""
-  FPlan[num1]["STARstart"] = 99
-  FPlan[num1]["STARend"] = 99
-  FPlan[num1]["APPident"] = ""
-  FPlan[num1]["APPstart"] = 99
-  FPlan[num1]["APPend"] = 99
-  FPlan[num1]["APPMAP"] = 99
-  num1 = num1 + 1
+							if types == 1 then
+								types = 0
+							elseif types == 3 then
+								types = 1
+							elseif types == 11 then
+								types = 3
+							elseif types == 28 then
+								types = 4
+							end
+							--print(num1, num2, types, ident, alt, lat, lon)
+							WPT = enterident(ident, types, 0, 5, 0, lat, lon)
+							--print(ident, types, WPT["length"])
+							if WPT["length"] == 0 then
+								--don't remove it, better create a user WPT, you know the type and everything!
+								if string.len(ident) > 5 or string.find(ident, "[+-.]") then
+									--This seems to be working!
+									local found = 1
+									local num3 = 1
+									while found ~= 0 do
+										ident = string.format("WPT%02d", num3)
+										WPT2 = enterident(ident, types, 0, 5, 0)
+										found = WPT2["length"]
+										--  WPT = enterident(ident, 0, 0, 4, 0)
+										num3 = num3 + 1
+									end
+								end
+								--print(num1, ident)
+								local x = 0
+								createWPT(types, ident, 0)
+								WPT = enterident(ident, types, 0, 5, 0)
+								WPT[1]["lat"]= lat
+								WPT[1]["lon"]= lon
+								if types == 1 then
+									WPT[1]["magvar"] = round(-getmagvar(lat, lon))
+								end
+							end
+							FPlan[num1][num2] = WPT[1]
+						end
+					end
+				end
+			end
+			file:close()
+		end
+		FPlan[num1][num2+1] = {}
+		FPlan[num1][num2+1]["ident"] = "     "
+		FPlan[num1]["SIDident"] = ""
+		FPlan[num1]["SIDstart"] = 99
+		FPlan[num1]["SIDend"] = 99
+		FPlan[num1]["STARident"] = ""
+		FPlan[num1]["STARstart"] = 99
+		FPlan[num1]["STARend"] = 99
+		FPlan[num1]["APPident"] = ""
+		FPlan[num1]["APPstart"] = 99
+		FPlan[num1]["APPend"] = 99
+		FPlan[num1]["APPMAP"] = 99
+		num1 = num1 + 1
+	end
+	return false
 end
+readFpl(2)
+sasl.registerCommandHandler(sasl.createCommand("custom/KLN90/reload_fpl", "Reload all flight plan(.fms) files"), 0, readFpl)
+
 
 values["activeWPT"] = {}
 values["activeWPT"]["length"] = 0
