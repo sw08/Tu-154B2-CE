@@ -10917,6 +10917,7 @@ IDX 8707
 ATTR_layer_group Cockpit 0
 ANIM_begin
 ANIM_hide 0.000000 0.000000 sim/custom/b2/kontur_90th
+ANIM_hide 0.000000 0.000000 tu154b2/custom/anim/show_taws
 TRIS 0 9201
 ATTR_solid_camera
 ATTR_light_level 0.000000 1.000000 tu154b2/custom/light/no_LIT

@@ -259,7 +259,7 @@ defineProperty("v_left", globalPropertyf("sim/cockpit2/gauges/indicators/airspee
 defineProperty("v_right", globalPropertyf("sim/cockpit2/gauges/indicators/airspeed_kts_copilot"))
 --defineProperty("h", globalPropertyf("tu154b2/custom/svs/altitude"))
 defineProperty("absu_gs", globalPropertyi("tu154b2/custom/buttons/console/absu_gs")) -- кнопка глиссада на панели АБСУ
-cockpit_80s = globalPropertyi("sim/custom/b2/kontur_70th")
+cockpit_80s = globalPropertyi("sim/custom/b2/kontur_pa_off")
 --temp = globalPropertyf("sim/weather/aircraft/temperature_ambient_deg_c")
 --p_stat_smoothed = globalPropertyf("tu154b2/custom/svs/p_s_smoothed")
 p_stat = globalPropertyf("sim/weather/aircraft/barometer_current_pas")
@@ -802,12 +802,13 @@ function update()
 			local KDZ_gs=150
 			local K_thet1_gs=2
 			local K_thet2_gs=0.5
+			
 			-- P and D parts
-			local k_side_gs=gliss_dev* KZ_gs*(0.5+0.5*bool2int(rv_switch > 2))
-			local k_d_side_gs=gliss_spd * KDZ_gs*(0.5+0.5*bool2int(rv_switch > 2))
+			local k_side_gs=gliss_dev* KZ_gs*(0.2+0.8*bool2int(rv_switch > 2))
+			local k_d_side_gs=gliss_spd * KDZ_gs*(0.2+0.8*bool2int(rv_switch > 2))
 			if secondNav then
-				k_side_gs=gliss_dev2* KZ_gs*(0.5+0.5*bool2int(rv_switch > 2))
-				k_d_side_gs=gliss_spd2 * KDZ_gs*(0.5+0.5*bool2int(rv_switch > 2))
+				k_side_gs=gliss_dev2* KZ_gs*(0.2+0.8*bool2int(rv_switch > 2))
+				k_d_side_gs=gliss_spd2 * KDZ_gs*(0.2+0.8*bool2int(rv_switch > 2))
 				if rv_switch ==1 and math.abs(gliss_dev2) > 0.25 and get(absu_bns_pitch_fail)==0 then
 					set(absu_gs_out, 1)
 				end

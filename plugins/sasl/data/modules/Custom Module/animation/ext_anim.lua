@@ -153,12 +153,14 @@ defineProperty("wiper_angle_left", globalPropertyf("tu154b2/custom/anim/wiper_an
 defineProperty("wiper_angle_right", globalPropertyf("tu154b2/custom/anim/wiper_angle_right"))
 tire_steer_command_deg = globalProperty("sim/flightmodel2/gear/tire_steer_command_deg[0]")
 defineProperty("rud_coeff", globalPropertyf("tu154b2/custom/controlls/rudder_coeff"))
+win_slide_L=globalPropertyf("sim/custom/anim/cockpit_window_left_slide")
+win_slide_R=globalPropertyf("sim/custom/anim/cockpit_window_right_slide")
 
 defineProperty("pilot_Z", globalPropertyf("sim/aircraft/view/acf_peZ"))
 defineProperty("pilot_X", globalPropertyf("sim/aircraft/view/acf_peX"))
 defineProperty("pilot_head", globalPropertyi("sim/graphics/view/pilots_head_psi"))
-defineProperty("db1", globalPropertyf("tu154b2/custom/controlls/debug1"))
-defineProperty("db2", globalPropertyf("tu154b2/custom/controlls/debug2"))
+-- defineProperty("db1", globalPropertyf("tu154b2/custom/controlls/debug1"))
+-- defineProperty("db2", globalPropertyf("tu154b2/custom/controlls/debug2"))
 
 
 
@@ -204,11 +206,23 @@ local win_R_x=0.7180854
 local win_R_z=-22.717438
 local dist_gain=5
 
+local door_1=0
+local door_2=0
+local door_3=0
+
 local main_gear_ext_corr_tbl= {
 {-1, 1.12},
 {0.227, 1.12},
 {0.42, 1.05},
 {1, 1.05}
+}
+
+local door_tbl= {
+{-1, -1},
+{0.0, 0},
+{0.05, 0.2},
+{0.2, 0.2},
+{1, 1}
 }
 
 local function inn_balance (src_x, src_z, x, z , cam_hdg)
@@ -394,17 +408,28 @@ function update()
 	-- left window
 	local window_but_L = get(slider_1)
 	local window_L = get(cockpit_window_left)
-	
+	local slide_L=get(win_slide_L)
+	local slide_R=get(win_slide_R)
 	if window_L == 0 and window_may_open or window_L > 0 then
-		if window_but_L == 1 then window_L = window_L + (window_but_L * 2 - 1) * passed / 4.5 -- open
-		else window_L = window_L + (window_but_L * 2 - 1) * passed / 2.5 end -- close
+		if window_but_L == 1 then 
+			if window_L<0.25 then
+				window_L = window_L + (window_but_L * 2 - 1) * passed / 4.5 -- open
+			elseif slide_L>0 and window_L<1 then
+				window_L = window_L + (window_but_L * 2 - 1) * passed / 2 -- slide open
+			end
+		else window_L = window_L + (window_but_L * 2 - 1) * passed / 2 end -- close
 	end
 	
 	if window_L <= 0.01 and not window_may_open and window_but_L == 1 then set(slider_1, 0) end -- reset slider, if not able to open
 	
 	-- limits
-	if window_L > 1 then window_L = 1
-	elseif window_L < 0 then window_L = 0 end
+		if window_L > 1 then
+			window_L = 1
+			set(win_slide_L,0)
+		elseif window_L < 0 then 
+			window_L = 0 
+		end
+	
 	
 	set(cockpit_window_left, window_L)
 		
@@ -413,15 +438,24 @@ function update()
 	local window_R = get(cockpit_window_right)
 	
 	if window_R == 0 and window_may_open or window_R > 0 then
-		if window_but_R == 1 then window_R = window_R + (window_but_R * 2 - 1) * passed / 4.5 -- open
+		if window_but_R == 1 then 
+			if window_R<0.25 then
+				window_R = window_R + (window_but_R * 2 - 1) * passed / 4.5 -- open
+			elseif slide_R>0 and window_R<1 then
+				window_R = window_R + (window_but_R * 2 - 1) * passed / 2 -- slide open
+			end
 		else window_R = window_R + (window_but_R * 2 - 1) * passed / 2.5 end -- close
 	end
 	
 	if window_R <= 0.01 and not window_may_open and window_but_R == 1 then set(slider_2, 0) end-- reset slider, if not able to open
 	
 	-- limits
-	if window_R > 1 then window_R = 1
-	elseif window_R < 0 then window_R = 0 end
+	if window_R >1 then 
+		window_R = 1
+		set(win_slide_R,0)
+	elseif window_R < 0 then 
+		window_R = 0 
+	end
 	
 	set(cockpit_window_right, window_R)
 	
@@ -555,7 +589,7 @@ end
 
 
 	-- Door 1 
-	local door_1 = get(pax_door_1)
+	--local door_1 = get(pax_door_1)
 	local door_1_cmd = get(slider_5)
 	
 	if door_1 == 0 and door_may_open or door_1 > 0 then
@@ -567,12 +601,12 @@ end
 	-- limits
 	if door_1 > 1 then door_1 = 1
 	elseif door_1 < 0 then door_1 = 0 end
-	
-	set(pax_door_1, door_1)
+	local door_1_act=interpolate(door_tbl,door_1)
+	set(pax_door_1, door_1_act)
 
 
 	-- Door 2
-	local door_2 = get(pax_door_2)
+	--local door_2 = get(pax_door_2)
 	local door_2_cmd = get(slider_6)
 	
 	if door_2 == 0 and door_may_open or door_2 > 0 then
@@ -584,11 +618,11 @@ end
 	-- limits
 	if door_2 > 1 then door_2 = 1
 	elseif door_2 < 0 then door_2 = 0 end
-	
-	set(pax_door_2, door_2)	
+	local door_2_act=interpolate(door_tbl,door_2)
+	set(pax_door_2, door_2_act)	
 
 	-- Door 3
-	local door_3 = get(pax_door_3)
+	--local door_3 = get(pax_door_3)
 	local door_3_cmd = get(slider_7)
 	
 	if door_3 == 0 and door_may_open or door_3 > 0 then
@@ -600,8 +634,8 @@ end
 	-- limits
 	if door_3 > 1 then door_3 = 1
 	elseif door_3 < 0 then door_3 = 0 end
-	
-	set(pax_door_3, door_3)		
+	local door_3_act=interpolate(door_tbl,door_3)
+	set(pax_door_3, door_3_act)		
 	
 	
 	-- cockpit door
