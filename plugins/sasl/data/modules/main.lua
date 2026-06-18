@@ -19,7 +19,7 @@ addSearchPath(moduleDirectory .. "/Custom Module/gui")
 addSearchPath(moduleDirectory .. "/Custom Module")
 addSearchPath(moduleDirectory .. "/Custom Module/main_panel")
 addSearchPath(moduleDirectory .. "/Custom Module/main_panel/taws")
-
+nd_display = sasl.gl.createRenderTarget ( 500 , 400 )
 --include("dataref_creator_4.lua")
 
 sasl.gl.setRenderTextPixelAligned(true )
@@ -114,6 +114,7 @@ test_panel.visible = true
 -- engines_data={}
 -- failures_data={}
 -- kskv_data={}
+tcas_data_tbl={}
 components = {
 
 -- internal logic

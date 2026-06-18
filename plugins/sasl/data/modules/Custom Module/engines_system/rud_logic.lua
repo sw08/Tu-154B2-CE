@@ -141,9 +141,9 @@ defineProperty("eng3_ice", globalProperty("sim/flightmodel/failures/inlet_ice_pe
 defineProperty("rpm_low_1", globalPropertyf("tu154b2/custom/gauges/engine/rpm_low_1")) -- обороты турбины низкого давления №1
 defineProperty("rpm_low_2", globalPropertyf("tu154b2/custom/gauges/engine/rpm_low_2")) -- обороты турбины низкого давления №2
 defineProperty("rpm_low_3", globalPropertyf("tu154b2/custom/gauges/engine/rpm_low_3")) -- обороты турбины низкого давления №3
-R_1 =  globalProperty("sim/flightmodel/engine/POINT_thrust[0]")
-R_2 =  globalProperty("sim/flightmodel/engine/POINT_thrust[1]")
-R_3 =  globalProperty("sim/flightmodel/engine/POINT_thrust[2]")
+R_1 =  globalProperty("sim/cockpit2/engine/indicators/thrust_dry_n[0]")
+R_2 =  globalProperty("sim/cockpit2/engine/indicators/thrust_dry_n[1]")
+R_3 =  globalProperty("sim/cockpit2/engine/indicators/thrust_dry_n[2]")
 R_SC_1 = globalPropertyf("tu154b2/custom/SC/thrust_1")
 R_SC_2 = globalPropertyf("tu154b2/custom/SC/thrust_2")
 R_SC_3 = globalPropertyf("tu154b2/custom/SC/thrust_3")
@@ -817,7 +817,7 @@ local reverse_table = {{ -10000, 0.04 }, -- BUGS workaround
 		set(R_SC_2,get(R_2))
 		set(R_SC_3,get(R_3))
 	else
-		if get(hascontrol_1) == 1 and get(control_thro_other) == 0 then
+		if get(hascontrol_1) == 2 then
 			if kvd1<54.2-idle_lim_1 then -- engine controller takes over above 54.2% N2
 				set(sim_rud_1,0)
 			else

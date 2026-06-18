@@ -47,7 +47,7 @@ defineProperty("frame_time", globalPropertyf("tu154b2/custom/time/frame_time")) 
 
 
 -- controls
-defineProperty("taws_english", globalPropertyi("tu154b2/custom/taws/taws_english")) -- язык системы. 0 - русский, 1 - английский	0
+defineProperty("taws_english", globalPropertyi("sim/custom/kontur/dist_mode_l")) -- язык системы. 0 - русский, 1 - английский	0
 defineProperty("mode_set", globalPropertyi("tu154b2/custom/taws/mode_set")) -- режим работы экрана. 0 - выкл, 1 - карта высот, 2 - вид сбоку, 3 - часы, 4 - процесс включения, 5 - тест
 
 defineProperty("egpws_alarm_1", globalPropertyi("tu154b2/custom/switchers/ovhd/egpws_alarm_1")) -- сигнализация СРПБЗ общ
@@ -275,7 +275,9 @@ function update()
 		
 		
 		if rv_alt > 130 then mode_7_active = true end
-		if (gears and flaps and rv_alt < 130) or get(egpws_relief) == 0 or gear_touch or (math.abs(GSlope) < 0.7 and GSflag == 0) then mode_7_active = false end
+		if (gears and flaps and rv_alt < 130) or get(egpws_relief) == 0 or gear_touch or (math.abs(GSlope) < 0.7 and GSflag == 0) then 
+			mode_7_active = false 
+		end
 		
 		
 		
@@ -736,44 +738,44 @@ function update()
 			set(taws_rus_phrase, 14 * (1 - eng) * alarm)
 			set(taws_eng_phrase, 14 * eng * alarm)
 			sound_counter = 1.5
-		elseif baro_vvi < 0 and rv_alt > 4.8 and rv_alt < 5.2 and sound_counter < 0 and MASTER then -- altitude callout 5m
+		elseif baro_vvi < 0 and rv_alt > 4.8 and rv_alt < 5.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 5m
 			set(taws_rus_phrase, 1 * (1 - eng))
 			--set(taws_eng_phrase, 1 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 9.8 and rv_alt < 10.2 and sound_counter < 0 and MASTER then -- altitude callout 10m
+		elseif baro_vvi < 0 and rv_alt > 9.8 and rv_alt < 10.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 10m
 			set(taws_rus_phrase, 2 * (1 - eng))
 			--set(taws_eng_phrase, 2 * eng)	
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 14.8 and rv_alt < 15.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 15m
+		elseif baro_vvi < 0 and rv_alt > 14.8 and rv_alt < 15.2 and sound_counter < 0 and eng == 0 and eng == 0 and MASTER then -- altitude callout 15m
 			set(taws_rus_phrase, 3 * (1 - eng))
 			--set(taws_eng_phrase, 3 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 19.8 and rv_alt < 20.2 and sound_counter < 0 and MASTER then -- altitude callout 20m
+		elseif baro_vvi < 0 and rv_alt > 19.8 and rv_alt < 20.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 20m
 			set(taws_rus_phrase, 4 * (1 - eng))
 			--set(taws_eng_phrase, 4 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 24.8 and rv_alt < 25.2 and sound_counter < 0 and sound_counter < 0 and MASTER then -- altitude callout 25m
+		elseif baro_vvi < 0 and rv_alt > 24.8 and rv_alt < 25.2 and sound_counter < 0 and eng == 0 and sound_counter < 0 and MASTER then -- altitude callout 25m
 			set(taws_rus_phrase, 5 * (1 - eng))
 			--set(taws_eng_phrase, 5 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 29.8 and rv_alt < 30.2 and sound_counter < 0 and MASTER then -- altitude callout 30m
+		elseif baro_vvi < 0 and rv_alt > 29.8 and rv_alt < 30.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 30m
 			set(taws_rus_phrase, 6 * (1 - eng))
 			--set(taws_eng_phrase, 6 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 39.8 and rv_alt < 40.2 and sound_counter < 0 and MASTER then -- altitude callout 40m
+		elseif baro_vvi < 0 and rv_alt > 39.8 and rv_alt < 40.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 40m
 			set(taws_rus_phrase, 7 * (1 - eng))
 			--set(taws_eng_phrase, 7 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 49.8 and rv_alt < 50.2 and sound_counter < 0 and MASTER then -- altitude callout 50m
+		elseif baro_vvi < 0 and rv_alt > 49.8 and rv_alt < 50.2 and sound_counter < 0 and eng == 0 and MASTER then -- altitude callout 50m
 			set(taws_rus_phrase, 8 * (1 - eng))
 			--set(taws_eng_phrase, 8 * eng)
 			sound_counter = 1
 		elseif baro_vvi < 0 and rv_alt > 59.8 and rv_alt < 60.2 and eng == 0 and sound_counter < 0 and MASTER then -- altitude callout 60m
 			set(taws_rus_phrase, 9 * (1 - eng))
-			--set(taws_eng_phrase, 9 * eng)
+			set(taws_eng_phrase, 9 * eng)
 			sound_counter = 1
 			
-		elseif baro_vvi < 0 and rv_alt > 15 and rv_alt < 15.45 and sound_counter < 0 and MASTER then -- altitude callout 50ft
+		elseif baro_vvi < 0 and rv_alt > 15 and rv_alt < 15.45 and eng == 1 and sound_counter < 0 and MASTER then -- altitude callout 50ft
 			--set(taws_rus_phrase, 9 * (1 - eng))
 			set(taws_eng_phrase, 1 * eng)
 			sound_counter = 1	
@@ -795,17 +797,17 @@ function update()
 			sound_counter = 2
 		elseif baro_vvi < 0 and rv_alt > 149.8 and rv_alt < 150.2 and eng == 0 and sound_counter <= 0 and MASTER then -- altitude callout 150m
 			set(taws_rus_phrase, 10 * (1 - eng))
-			--set(taws_eng_phrase, 10 * eng)
+			set(taws_eng_phrase, 10 * eng)
 			sound_counter = 2
-		elseif baro_vvi < 0 and rv_alt > 60.7 and rv_alt < 61.1 and sound_counter <= 0 and MASTER then -- altitude callout 200ft
+		elseif baro_vvi < 0 and rv_alt > 60.7 and rv_alt < 61.1 and sound_counter <= 0 and eng == 1 and MASTER then -- altitude callout 200ft
 			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 2 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 152 and rv_alt < 153 and sound_counter <= 0 and MASTER then -- altitude callout 500ft
+		elseif baro_vvi < 0 and rv_alt > 152 and rv_alt < 153 and sound_counter <= 0 and eng == 1 and MASTER then -- altitude callout 500ft
 			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 3 * eng)
 			sound_counter = 1
-		elseif baro_vvi < 0 and rv_alt > 304 and rv_alt < 306 and sound_counter <= 0 and MASTER then -- altitude callout 1000ft
+		elseif baro_vvi < 0 and rv_alt > 304 and rv_alt < 306 and sound_counter <= 0 and eng == 1 and MASTER then -- altitude callout 1000ft
 			--set(taws_rus_phrase, 10 * (1 - eng))
 			set(taws_eng_phrase, 4 * eng)
 			sound_counter = 2
