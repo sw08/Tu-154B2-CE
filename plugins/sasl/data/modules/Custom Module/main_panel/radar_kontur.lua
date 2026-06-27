@@ -37,6 +37,10 @@ pkp_fail = globalPropertyi("sim/operation/failures/rel_ss_ahz")
 az = globalProperty("sim/cockpit2/EFIS/EFIS_weather_sector_brg")
 kont_dist_mode = globalPropertyi("sim/custom/kontur/dist_mode_l")
 ismaster = globalPropertyf("scp/api/ismaster") -- Master. 0 = plugin not found, 1 = slave 2 = master
+wx_alpha = globalPropertyf("sim/cockpit2/EFIS/EFIS_weather_alpha")
+wx_alpha_fo = globalPropertyf("sim/cockpit2/EFIS/EFIS_weather_alpha_copilot")
+taws = globalPropertyi("sim/custom/kontur/left_taws")
+taws_fo = globalPropertyi("sim/custom/kontur/right_taws")
 
 range0 = globalProperty("sim/cockpit2/EFIS/map_range_steps[1]")
 range1 = globalProperty("sim/cockpit2/EFIS/map_range_steps[2]")
@@ -50,7 +54,7 @@ disp_brt = globalProperty("sim/cockpit2/switches/instrument_brightness_ratio[0]"
 
 -- defineProperty("db1", globalPropertyf("tu154b2/custom/controlls/debug1"))
 -- defineProperty("db2", globalPropertyf("tu154b2/custom/controlls/debug2"))
--- defineProperty("db3", globalPropertyf("tu154b2/custom/controlls/debug3"))
+defineProperty("db3", globalPropertyf("tu154b2/custom/controlls/debug3"))
 
 local knob_1_prev=0
 local knob_2_prev=0
@@ -66,6 +70,7 @@ local wx_az=0
 local wx_speed=0
 local test_run=0
 local wx_side_prev = 0
+local wx_alph = 1
 	--- auto elevation
 local button=findCommand("kontur/info_btn_l")
 function button_hnd(phase)
@@ -167,7 +172,8 @@ function update()
 			test_run=0
 		else
 			if get(test)~=-1 then
-				wx_mode=1
+				wx_mode=0
+				wx_alph = 0
 				if get(test)==1 then
 					wx_autotilt=0
 					wx_tilt=15
@@ -183,11 +189,14 @@ function update()
 					-- --set(elev,0)
 				-- end
 				if radar_mode_set==2 then
-					wx_mode=1
+					wx_mode=0
+					wx_alph = 0
 				elseif radar_mode_set==3 then
 					wx_mode=3
+					wx_alph = 1
 				elseif radar_mode_set==4 then
 					wx_mode=4
+					wx_alph = 1
 				-- else
 					-- set(wxr_mode,mfi_mode)
 				end
@@ -206,7 +215,7 @@ function update()
 		set(sec_width,60)
 		set(az,0)
 		--set(elev,wx_tilt)	
-		local dist_mode = 1-0.073*get(kont_dist_mode)
+		local dist_mode = (1-0.073*get(kont_dist_mode))*1.13
 		set(range0,4*dist_mode)
 		set(range1,10*dist_mode)
 		set(range2,20*dist_mode)
@@ -235,6 +244,16 @@ function update()
 			set(wxr_mode_fo,get(wxr_mode))
 			set(auto_tilt_fo,get(auto_tilt))
 		end
+		if get(taws) > 0 then
+			set(wx_alpha,1)
+		else
+			set(wx_alpha,wx_alph)
+		end
+		if get(taws_fo) > 0 then
+			set(wx_alpha_fo,1)
+		else
+			set(wx_alpha_fo,wx_alph)
+		end
 	else
 		set(az_lim,104)
 		set(gcs,0)
@@ -247,7 +266,6 @@ function update()
 		set(range4,250*0.688)
 		set(range5,375*0.688)
 		set(disp_brt,1)
+		set(wx_alpha,1)
 	end
 end
-
-
