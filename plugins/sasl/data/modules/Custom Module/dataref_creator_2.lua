@@ -198,6 +198,7 @@ createGlobalPropertyf("tu154b2/custom/bleed/cold_tube2_t", 30																) -
 createGlobalPropertyf("tu154b2/custom/bleed/cockpit_temp", 20																) -- температура в кабине
 createGlobalPropertyf("tu154b2/custom/bleed/cabin_1_temp", 20																) -- температура в салоне 1
 createGlobalPropertyf("tu154b2/custom/bleed/cabin_2_temp", 20																) -- температура в салоне 2
+createGlobalPropertyf("tu154b2/custom/bleed/rear_tech_temp", 20																)
 createGlobalPropertyf("tu154b2/custom/start/starter_pressure", 0																) -- двление в системе запуска
 createGlobalPropertyi("tu154b2/custom/start/apd_working_1", 0																) -- работа системы АПД
 createGlobalPropertyi("tu154b2/custom/start/apd_working_2", 0																) -- работа системы АПД
@@ -744,6 +745,7 @@ createGlobalPropertyi("tu154b2/custom/failures/sard/brake_R_overheat_3",0)
 createGlobalPropertyf("tu154b2/custom/bleedair/eng_1_bleed",0)
 createGlobalPropertyf("tu154b2/custom/bleedair/eng_2_bleed",0)
 createGlobalPropertyf("tu154b2/custom/bleedair/eng_3_bleed",0)
+createGlobalPropertyf("tu154b2/custom/bleedair/apu_bleed",0)
 createGlobalPropertyi("tu154b2/custom/taws/taws_button",0)
 createGlobalPropertyi("tu154b2/custom/tcas/tcas_button",0)
 createGlobalPropertyi("tu154b2/custom/rotary/GNS430/tss_rot",0)
@@ -805,6 +807,8 @@ createGlobalPropertyf("tu154b2/custom/taws/min_r_1000",0)
 createGlobalPropertyi("tu154b2/custom/taws/disp_rdy",0)
 createGlobalPropertyi("tu154b2/custom/taws/phase",0)
 createGlobalPropertyi("tu154b2/custom/tcas/vvi_left",0)
+createGlobalPropertyi("tu154b2/custom/controlls/flap_chan_1", 0)
+createGlobalPropertyi("tu154b2/custom/controlls/flap_chan_2", 0)
 --createGlobalPropertyf("tu154b2/custom/rls/rls_drift_angle",0)
 -- createGlobalPropertyi("tu154b2/custom/gauges/eng/opora_sel_vibro",0)
 -- createGlobalPropertyi("tu154b2/custom/gauges/eng/vibro_pwr1",0)
